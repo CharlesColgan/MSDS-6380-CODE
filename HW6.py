@@ -9,9 +9,6 @@ Created on Tue Oct 27 15:51:05 2020
 
 #titanic_test.xlsx
 
-import numpy as np
-'Used for calculation'
-
 import pandas as pd
 'used for data storage and manipulation'
 
@@ -31,7 +28,7 @@ def read():
            
             global file_train 
            
-            file_train = pd.read_excel(input("Please enter file name for training data: "), header = None, names = names)            
+            file_train = pd.read_excel(input("Please enter file name for training data: "), names = names)            
             #Form data frame for training data
         
             check_train = True #Show valid
@@ -45,11 +42,10 @@ def read():
             print()
             
     while  check_test == False:
-        try:
-            
+        try:  
             global file_test
             
-            file_test = pd.read_excel(input("Please enter file name for test data: "), header = None, names = names)
+            file_test = pd.read_excel(input("Please enter file name for test data: "), names = names[0:8])
         
             check_test = True #Show valid
             
@@ -60,11 +56,46 @@ def read():
         except OSError:
             print("file not found, please enter file name for test data: ")
             print()
-                      
+            
+    
+def OneR():
+    'Implement OneR classification'
+    
+    checks = ["gender", "pclass", "sibsp", "parch", "embarked"] #Features to check with OneR
+    
+    file_test["survived"] = pd.Series(dtype = "int") #Location for classing
+    
+    for element in checks:
+        for i in file_train[element].unique()[1:]:
+            
+            if len(file_train[(file_train[element] == i) & (file_train["survived"] == 1)]) > len(
+                    file_train[(file_train[element] == i) & (file_train["survived"] == 0)]):
+                
+                file_test.loc[file_train[element] == i, "survived"] = 1
+                                     
+            else:
+                file_test.loc[file_train[element] == i, "survived"] = 0
+                
+        jill = file_test[["Id", element, "survived"]]
+        
+        print(jill.head(n=20))
+    
+    
+def save():
+    'Save results of OneR'
+    
+def success():
+    'determine success rate of OneR'
+                    
 def main():
     read()
     print()
-    
+    OneR()
+    print()
+    #save()
+    print()
+    #success()
+
 main()
         
 
