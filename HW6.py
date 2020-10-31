@@ -65,8 +65,12 @@ def OneR():
     
     file_test["survived"] = pd.Series(dtype = "int") #Location for classing
     
+    global result
+    
+    results = pd.DataFrame(index = range(392), columns = checks)
+    
     for element in checks:
-        for i in file_train[element].unique()[1:]:
+        for i in file_train[element].unique():
             
             if len(file_train[(file_train[element] == i) & (file_train["survived"] == 1)]) > len(
                     file_train[(file_train[element] == i) & (file_train["survived"] == 0)]):
@@ -76,11 +80,8 @@ def OneR():
             else:
                 file_test.loc[file_train[element] == i, "survived"] = 0
                 
-        jill = file_test[["Id", element, "survived"]]
+        results[element] = file_test["survived"]
         
-        print(jill.head(n=20))
-    
-    
 def save():
     'Save results of OneR'
     
